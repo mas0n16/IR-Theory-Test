@@ -256,11 +256,13 @@
   /* Results */
   #results {
     display: none;
-    text-align: center;
-    padding: 3rem 2rem;
-    border: 1px solid var(--border);
-    background: var(--card);
+    padding: 2.5rem 1.5rem 3rem;
     animation: fadeIn 0.4s ease;
+  }
+
+  .results-top {
+    text-align: center;
+    margin-bottom: 2.5rem;
   }
 
   .big-score {
@@ -275,50 +277,148 @@
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.75rem;
     color: var(--muted);
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     margin-top: 0.5rem;
-    margin-bottom: 2rem;
   }
 
-  .result-message {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--text);
-    max-width: 440px;
-    margin: 0 auto 2rem;
-    font-weight: 300;
+  /* Section breakdown */
+  .section-breakdown {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
-  .wrong-list {
-    text-align: left;
-    max-width: 500px;
-    margin: 0 auto 2rem;
-  }
-
-  .wrong-list h3 {
+  .breakdown-title {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--danger);
-    margin-bottom: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
   }
 
-  .wrong-list li {
+  .sec-row {
+    margin-bottom: 1.1rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .sec-row.sec-weak { border-left: 2px solid var(--danger); padding-left: 0.8rem; }
+
+  .sec-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+
+  .sec-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .sec-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+  }
+
+  .sec-icon { font-size: 0.8rem; }
+
+  .sec-bar-wrap {
+    background: var(--border);
+    height: 3px;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .sec-bar {
+    height: 3px;
+    transition: width 0.8s ease;
+  }
+
+  .missed-qs { margin-top: 0.4rem; }
+
+  .missed-q {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.5;
+    padding: 0.15rem 0;
+    font-style: italic;
+  }
+
+  /* Study plan */
+  .study-plan {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent2);
+    padding: 1.5rem;
+  }
+
+  .study-plan.all-good { border-top-color: var(--success); }
+
+  .study-plan-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+
+  .study-plan-sub {
     font-size: 0.82rem;
     color: var(--muted);
-    margin-bottom: 0.4rem;
-    padding-left: 1rem;
-    list-style: none;
-    position: relative;
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
   }
 
-  .wrong-list li::before {
-    content: '—';
-    position: absolute;
-    left: 0;
-    color: var(--danger);
+  .study-item {
+    margin-bottom: 1.1rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .study-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .study-item-header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .study-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    background: var(--accent2);
+    color: var(--bg);
+    width: 1.4rem;
+    height: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .study-sec-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--accent2);
+  }
+
+  .study-tip {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+    padding-left: 2.1rem;
   }
 
   /* Intro */
@@ -576,6 +676,15 @@ let score = 0;
 let answered = 0;
 let wrongItems = [];
 
+// Track performance by section
+const sectionResults = {};
+questions.forEach(q => {
+  if (!sectionResults[q.section]) {
+    sectionResults[q.section] = { correct: 0, total: 0, missed: [] };
+  }
+  sectionResults[q.section].total++;
+});
+
 function startQuiz() {
   document.getElementById('intro').style.display = 'none';
   document.getElementById('quiz-area').style.display = 'block';
@@ -626,11 +735,13 @@ function selectAnswer(qIdx, chosen) {
     opts[chosen].classList.add('correct-ans');
     document.getElementById(`q-${qIdx}`).classList.add('correct');
     score++;
+    sectionResults[q.section].correct++;
   } else {
     opts[chosen].classList.add('wrong-ans');
     opts[q.ans].classList.add('correct-ans');
     document.getElementById(`q-${qIdx}`).classList.add('wrong');
     wrongItems.push(q.q.length > 70 ? q.q.substring(0, 70) + '…' : q.q);
+    sectionResults[q.section].missed.push(q.q.length > 60 ? q.q.substring(0, 60) + '…' : q.q);
   }
 
   answered++;
@@ -659,31 +770,109 @@ function updateProgress() {
   document.getElementById('progress-bar').style.width = pct + '%';
 }
 
+// Study tips per section
+const studyTips = {
+  "IR Theories": "Re-read the Core Theories section. Focus on distinguishing Realism vs. Idealism, and memorize Walt's four threat factors (power, proximity, offensive capability, intentions).",
+  "Historical Doctrines": "Review the timeline from Isolationism → Monroe Doctrine → Roosevelt Corollary → Cold War → Unipolar Moment. Know the dates and what each policy added or changed.",
+  "Trump II Policy": "Study the NSS shifts section carefully. Know what was abandoned (climate, human rights) and why the 'Donroe Doctrine' differs from Monroe. Review 'Guns and Butter.'",
+  "Venezuela Case Study": "Know the three pillars: the justification (narco-terrorism), the resource motive (oil), and the legal controversy (no Congressional authorization / imminent threat standard).",
+  "Greenland Case Study": "Focus on the three counter-arguments: Nordic diplomats disputing the Russian/Chinese threat claim, Greenlandic leaders saying 'not for sale,' and critics calling it 19th-century expansionism.",
+  "Trade & Tariffs": "Memorize TACO, the Smoot-Hawley comparison (1930 / 14.4%), and the household cost figures ($1,200–$5,000). Understand protectionism vs. free trade vs. strategic trade.",
+  "Scholar Perspectives": "This is high-yield. For each of the four scholars, know their NAME, their KEY TERM, and their core argument: Gunitsky=Neo-Feudalism, Pelc=Imperial Aesthetics, Musgrave=FPA/Consistency, Walt=Balance-of-Threat/Predator.",
+  "Synthesis": "Review how all four scholars agree that Trump II breaks from classic IR theory — and why that matters. Practice explaining the difference between realism, neo-feudalism, and aesthetics-driven behavior."
+};
+
 function showResults() {
   document.getElementById('quiz-area').style.display = 'none';
   const results = document.getElementById('results');
   results.style.display = 'block';
 
   const pct = Math.round((score / questions.length) * 100);
-  let message = '';
-  if (pct >= 88) message = "Excellent work — you clearly understand the material deeply. Walk into that midterm with confidence.";
-  else if (pct >= 72) message = "Solid performance. Review the questions you missed and pay attention to the scholar perspectives section.";
-  else if (pct >= 56) message = "You've got the basics, but spend more time on the case studies and theoretical frameworks before the exam.";
-  else message = "This material takes time to absorb. Re-read the study guide sections corresponding to your missed questions and try again.";
 
-  const wrongHtml = wrongItems.length > 0 ? `
-    <div class="wrong-list">
-      <h3>Review These Topics</h3>
-      <ul>${wrongItems.map(w => `<li>${w}</li>`).join('')}</ul>
-    </div>
-  ` : '';
+  // Grade tier
+  let tierLabel, tierColor;
+  if (pct >= 88) { tierLabel = "Strong"; tierColor = "var(--success)"; }
+  else if (pct >= 72) { tierLabel = "Passing"; tierColor = "var(--accent)"; }
+  else if (pct >= 56) { tierLabel = "Developing"; tierColor = "#e0a050"; }
+  else { tierLabel = "Needs Work"; tierColor = "var(--danger)"; }
+
+  // Build section breakdown
+  const sectionOrder = ["IR Theories","Historical Doctrines","Trump II Policy","Venezuela Case Study","Greenland Case Study","Trade & Tariffs","Scholar Perspectives","Synthesis"];
+  
+  const weakSections = [];
+  const strongSections = [];
+
+  const sectionRows = sectionOrder.map(sec => {
+    const data = sectionResults[sec];
+    if (!data || data.total === 0) return '';
+    const secPct = Math.round((data.correct / data.total) * 100);
+    const isWeak = secPct < 70;
+    const isMedium = secPct >= 70 && secPct < 100;
+    const isStrong = secPct === 100;
+    
+    if (isWeak) weakSections.push(sec);
+    else if (isStrong) strongSections.push(sec);
+
+    const barColor = isStrong ? 'var(--success)' : isWeak ? 'var(--danger)' : 'var(--accent)';
+    const statusIcon = isStrong ? '✓' : isWeak ? '✗' : '~';
+    const statusColor = isStrong ? 'var(--success)' : isWeak ? 'var(--danger)' : 'var(--accent)';
+
+    const missedHtml = data.missed.length > 0 ? `
+      <div class="missed-qs">
+        ${data.missed.map(m => `<div class="missed-q">↳ ${m}</div>`).join('')}
+      </div>` : '';
+
+    return `
+      <div class="sec-row ${isWeak ? 'sec-weak' : ''}">
+        <div class="sec-header">
+          <div class="sec-name">${sec}</div>
+          <div class="sec-stat">
+            <span class="sec-icon" style="color:${statusColor}">${statusIcon}</span>
+            <span class="sec-frac" style="color:${statusColor}">${data.correct}/${data.total}</span>
+          </div>
+        </div>
+        <div class="sec-bar-wrap">
+          <div class="sec-bar" style="width:${secPct}%; background:${barColor};"></div>
+        </div>
+        ${isWeak && data.missed.length > 0 ? missedHtml : ''}
+      </div>`;
+  }).join('');
+
+  // Priority study plan
+  let studyPlanHtml = '';
+  if (weakSections.length > 0) {
+    studyPlanHtml = `
+      <div class="study-plan">
+        <div class="study-plan-title">📚 Priority Study Plan</div>
+        <div class="study-plan-sub">Focus on these sections before your midterm:</div>
+        ${weakSections.map((sec, i) => `
+          <div class="study-item">
+            <div class="study-item-header">
+              <span class="study-num">${i + 1}</span>
+              <span class="study-sec-name">${sec}</span>
+            </div>
+            <div class="study-tip">${studyTips[sec] || ''}</div>
+          </div>
+        `).join('')}
+      </div>`;
+  } else {
+    studyPlanHtml = `<div class="study-plan all-good"><div class="study-plan-title">🎯 You're in great shape!</div><div class="study-plan-sub">No weak areas detected. Do a final pass on Scholar Perspectives to make sure you can name each theorist's key argument under exam pressure.</div></div>`;
+  }
 
   results.innerHTML = `
-    <div class="big-score">${pct}%</div>
-    <div class="score-label">${score} correct out of ${questions.length} questions</div>
-    <div class="result-message">${message}</div>
-    ${wrongHtml}
-    <button class="btn primary" onclick="restartQuiz()">Retake Quiz</button>
+    <div class="results-top">
+      <div class="big-score" style="color:${tierColor}">${pct}%</div>
+      <div class="score-label">${score} correct out of ${questions.length} &nbsp;·&nbsp; <span style="color:${tierColor}">${tierLabel}</span></div>
+    </div>
+
+    <div class="section-breakdown">
+      <div class="breakdown-title">Performance by Section</div>
+      ${sectionRows}
+    </div>
+
+    ${studyPlanHtml}
+
+    <button class="btn primary" onclick="restartQuiz()" style="margin-top:1.5rem;">Retake Quiz</button>
   `;
 
   document.getElementById('progress-bar').style.width = '100%';
@@ -695,6 +884,11 @@ function restartQuiz() {
   answered = 0;
   wrongItems = [];
   current = 0;
+  // Reset section tracking
+  Object.keys(sectionResults).forEach(sec => {
+    sectionResults[sec].correct = 0;
+    sectionResults[sec].missed = [];
+  });
   document.getElementById('results').style.display = 'none';
   document.getElementById('score-display').textContent = 'Score: 0 / 0';
   document.getElementById('progress-bar').style.width = '0%';
