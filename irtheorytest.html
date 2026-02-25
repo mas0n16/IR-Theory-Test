@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IR Midterm Practice Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --border: #2a2a3a;
+    --accent: #c8a84b;
+    --accent2: #5b8dd9;
+    --danger: #d95b5b;
+    --success: #5bd98a;
+    --text: #e8e4d8;
+    --muted: #6b6880;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 2rem 1.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .header-title span { color: var(--accent); }
+
+  .header-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  .score-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.4rem 0.9rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    height: 2px;
+    width: 100%;
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* Section label */
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 0.6rem;
+  }
+
+  /* Question card */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+    transition: border-color 0.3s;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .q-card.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-card.correct { border-color: var(--success); }
+  .q-card.wrong { border-color: var(--danger); }
+
+  .q-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.1em;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 1.4rem;
+    color: var(--text);
+  }
+
+  .options {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .option-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200, 168, 75, 0.05);
+  }
+
+  .option-btn .opt-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    min-width: 1.2rem;
+    margin-top: 0.1rem;
+    color: var(--muted);
+  }
+
+  .option-btn.correct-ans {
+    border-color: var(--success);
+    background: rgba(91, 217, 138, 0.08);
+    color: var(--success);
+  }
+
+  .option-btn.wrong-ans {
+    border-color: var(--danger);
+    background: rgba(217, 91, 91, 0.08);
+    color: var(--danger);
+  }
+
+  .option-btn.correct-ans .opt-label,
+  .option-btn.wrong-ans .opt-label { color: inherit; }
+
+  .option-btn:disabled { cursor: default; }
+
+  .explanation {
+    margin-top: 1.2rem;
+    padding: 1rem 1.2rem;
+    border-left: 3px solid var(--accent2);
+    background: rgba(91, 141, 217, 0.06);
+    font-size: 0.83rem;
+    line-height: 1.6;
+    color: #b8c8e8;
+    display: none;
+  }
+
+  .explanation.show { display: block; }
+
+  .explanation strong {
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  /* Nav */
+  .nav {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn.primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .btn.primary:hover { background: #d4b05e; }
+
+  .btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* Results */
+  #results {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    animation: fadeIn 0.4s ease;
+  }
+
+  .big-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .result-message {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text);
+    max-width: 440px;
+    margin: 0 auto 2rem;
+    font-weight: 300;
+  }
+
+  .wrong-list {
+    text-align: left;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+  }
+
+  .wrong-list h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--danger);
+    margin-bottom: 0.8rem;
+  }
+
+  .wrong-list li {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    padding-left: 1rem;
+    list-style: none;
+    position: relative;
+  }
+
+  .wrong-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--danger);
+  }
+
+  /* Intro */
+  #intro {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  #intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  #intro p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 420px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+
+  .category-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .cat-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-title">IR <span>Midterm</span> Quiz</div>
+    <div class="header-sub">International Relations & U.S. Foreign Policy</div>
+  </div>
+  <div class="score-badge" id="score-display">Score: 0 / 0</div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+
+<main>
+  <div id="intro">
+    <h2>Ready to test yourself?</h2>
+    <p>25 questions covering IR theory, historical doctrines, Trump II policy, case studies, and academic perspectives.</p>
+    <div class="category-grid">
+      <span class="cat-pill">IR Theories</span>
+      <span class="cat-pill">Historical Doctrines</span>
+      <span class="cat-pill">Trump II Policy</span>
+      <span class="cat-pill">Venezuela</span>
+      <span class="cat-pill">Greenland</span>
+      <span class="cat-pill">Trade & Tariffs</span>
+      <span class="cat-pill">Scholar Perspectives</span>
+    </div>
+    <button class="btn primary" onclick="startQuiz()">Begin Quiz →</button>
+  </div>
+
+  <div id="quiz-area" style="display:none;"></div>
+  <div id="results"></div>
+</main>
+
+<script>
+const questions = [
+  {
+    section: "IR Theories",
+    q: "Which IR theory assumes an 'anarchic' international system where states are in perpetual contest for security, territory, and prosperity?",
+    opts: ["Idealism/Liberalism", "Constructivism", "Realism", "Foreign Policy Analysis"],
+    ans: 2,
+    exp: "<strong>Realism</strong> holds that the absence of a world government (anarchy) means states must fend for themselves, prioritizing hard power like military force and nuclear deterrence."
+  },
+  {
+    section: "IR Theories",
+    q: "Stephen Walt's Balance-of-Threat Theory differs from classic realism by arguing that alliances form based on perceived threats rather than just aggregate power. Which of the following is NOT one of his four threat factors?",
+    opts: ["Geographic proximity", "Ideological similarity", "Offensive capabilities", "Perceived intentions"],
+    ans: 1,
+    exp: "Walt's four threat factors are: <strong>aggregate power, geographic proximity, offensive capabilities, and perceived intentions</strong>. Ideological similarity is not part of his formula."
+  },
+  {
+    section: "IR Theories",
+    q: "A scholar studies how shared norms around human rights have evolved since WWII and how they now constrain state behavior. Which IR theory best describes this approach?",
+    opts: ["Realism", "Geoeconomics", "Balance-of-Threat", "Constructivism"],
+    ans: 3,
+    exp: "<strong>Constructivism</strong> tracks how norms, cultural influences, and rituals change over time to shape international behavior — exactly what this scholar is doing."
+  },
+  {
+    section: "IR Theories",
+    q: "Foreign Policy Analysis (FPA) is distinctive because it:",
+    opts: ["Focuses solely on military balance between states", "Probes inside states to examine leaders' personalities and decision-making", "Argues that free trade prevents conflict", "Explains alliances through geographic proximity"],
+    ans: 1,
+    exp: "<strong>FPA</strong> shifts the unit of analysis from the state to internal actors — leaders, bureaucracies, public opinion — to explain foreign policy outcomes. This is why Trump's psychology gets its own section in the course."
+  },
+  {
+    section: "IR Theories",
+    q: "Which theory would best explain why the U.S. supports international institutions like the UN and IMF as tools for maintaining global order?",
+    opts: ["Realism", "Idealism/Liberalism", "Geoeconomics", "Balance-of-Threat Theory"],
+    ans: 1,
+    exp: "<strong>Idealism/Liberalism</strong> favors multilateralism and international institutions as mechanisms to resolve conflicts peacefully and promote democratic norms and human rights."
+  },
+  {
+    section: "Historical Doctrines",
+    q: "The Monroe Doctrine (1823) primarily declared that:",
+    opts: ["The U.S. would intervene militarily in any European conflict", "The Western Hemisphere was closed to further European colonization", "The U.S. had the right to police Latin American nations", "The U.S. would maintain strict neutrality in all foreign wars"],
+    ans: 1,
+    exp: "The <strong>Monroe Doctrine</strong> declared the Western Hemisphere closed to further European colonization, warning that such attempts would be viewed as hostile acts against the U.S."
+  },
+  {
+    section: "Historical Doctrines",
+    q: "The Roosevelt Corollary (1904) built on the Monroe Doctrine by:",
+    opts: ["Extending U.S. neutrality to Latin America", "Establishing the U.S. as an 'international police power' justifying intervention in Latin America", "Creating a formal military alliance with Western Hemisphere nations", "Banning European trade with South America"],
+    ans: 1,
+    exp: "The <strong>Roosevelt Corollary</strong> declared the U.S. had the right to intervene in Latin American nations to ensure 'stability,' effectively making the U.S. a regional police power."
+  },
+  {
+    section: "Historical Doctrines",
+    q: "The Cold War strategy of 'Containment' referred to:",
+    opts: ["Limiting nuclear weapons through arms control treaties", "Blocking Soviet expansion geographically and ideologically", "Keeping U.S. troops out of foreign conflicts", "Containing domestic opposition to the Vietnam War"],
+    ans: 1,
+    exp: "<strong>Containment</strong> was the core U.S. Cold War strategy of blocking Soviet expansion — through alliances, proxy wars, and economic pressure — without directly attacking the USSR."
+  },
+  {
+    section: "Historical Doctrines",
+    q: "The 'Unipolar Moment' refers to the period from:",
+    opts: ["1945–1991, during the Cold War", "1991–2001, after Soviet collapse and before 9/11", "2001–2020, the War on Terror era", "2017–present, during Trump's presidency"],
+    ans: 1,
+    exp: "After the <strong>Soviet collapse in 1991</strong>, the U.S. stood as the world's sole superpower. This 'Unipolar Moment' ended with the 9/11 attacks in 2001, which shattered the optimistic 'End of History' narrative."
+  },
+  {
+    section: "Historical Doctrines",
+    q: "Approximately how much did the post-9/11 War on Terror cost, and how many deaths did it cause?",
+    opts: ["$2 trillion / 100,000 deaths", "$8 trillion / 900,000+ deaths", "$5 trillion / 500,000 deaths", "$12 trillion / 1.5 million deaths"],
+    ans: 1,
+    exp: "The study guide cites approximately <strong>$8 trillion in costs and over 900,000 deaths</strong> (including 387,000 civilians) from nearly 20 years of post-9/11 conflict."
+  },
+  {
+    section: "Trump II Policy",
+    q: "The 'Donroe Doctrine' is best described as:",
+    opts: ["A new nuclear arms reduction treaty", "A Trump-era update to the Monroe Doctrine reasserting aggressive U.S. dominance over the Western Hemisphere", "A trade policy targeting Chinese imports", "A diplomatic initiative to expand NATO"], 
+    ans: 1,
+    exp: "The <strong>'Donroe Doctrine'</strong> is a 2025 update to the Monroe Doctrine, encapsulated by the phrase 'This is our hemisphere.' It prioritizes regional security and border control over democracy promotion."
+  },
+  {
+    section: "Trump II Policy",
+    q: "Which of the following represents a major departure in Trump II's National Security Strategy from previous administrations?",
+    opts: ["Increased funding for the UN and WHO", "Abandonment of climate change, global health, and human rights as security priorities", "Expansion of multilateral trade agreements", "Greater reliance on international arbitration"],
+    ans: 1,
+    exp: "Trump II's NSS explicitly departs from treating <strong>climate leadership, global health, and human rights</strong> as security essentials, viewing them as distractions from vital national interests."
+  },
+  {
+    section: "Trump II Policy",
+    q: "The 'Guns and Butter' theory of public opinion suggests that:",
+    opts: ["Military spending always hurts economic growth", "Citizens prioritize domestic issues unless a crisis forces foreign policy attention", "Voters consistently support military intervention abroad", "Nuclear deterrence guarantees domestic economic stability"],
+    ans: 1,
+    exp: "<strong>'Guns and Butter'</strong>: under normal conditions, citizens focus on domestic economic issues ('butter'). Only when a crisis or emergency arises do they shift attention to military/foreign policy ('guns')."
+  },
+  {
+    section: "Venezuela Case Study",
+    q: "What was the official legal justification used for the U.S. capture of Venezuelan President Nicolás Maduro?",
+    opts: ["Human rights violations and election fraud", "Narco-terrorism conspiracy charges", "Illegal seizure of U.S. oil assets", "Harboring al-Qaeda operatives"],
+    ans: 1,
+    exp: "Maduro was indicted for <strong>narco-terrorism conspiracy</strong>, specifically allegations that he used the Venezuelan state apparatus to transport cocaine to the United States."
+  },
+  {
+    section: "Venezuela Case Study",
+    q: "Critics of the Venezuela operation raised which of the following constitutional concerns?",
+    opts: ["The raid violated the War Powers Act's 48-hour reporting requirement", "The operation lacked Congressional authorization and it was unclear Maduro posed an imminent threat", "The CIA was prohibited from conducting foreign arrests under existing law", "Delta Force cannot legally operate in South America under U.S. code"],
+    ans: 1,
+    exp: "Democrats criticized the strike for <strong>lacking Congressional approval</strong> and questioned whether Maduro actually posed an 'imminent threat' — the standard required to justify executive military action without Congress."
+  },
+  {
+    section: "Greenland Case Study",
+    q: "Nordic diplomats rejected Trump's stated justification for acquiring Greenland. What was their counter-claim?",
+    opts: ["Greenland's resources are legally owned by the EU, not Denmark", "Trump's claims of Russian/Chinese naval threats near Greenland were false — that activity is confined to the Russian Arctic", "Greenland already has a defense treaty with NATO that supersedes U.S. claims", "Environmental treaties protect Greenland from any territorial transfer"],
+    ans: 1,
+    exp: "Nordic diplomats and NATO briefings confirmed that <strong>Russian/Chinese naval activity is confined to the Russian side of the Arctic</strong>, not near Greenland — undermining Trump's security pretext."
+  },
+  {
+    section: "Greenland Case Study",
+    q: "What did Greenlandic local leaders say about Trump's acquisition proposals?",
+    opts: ["They expressed openness to a defense partnership with the U.S.", "They issued a joint statement asserting they want to be 'Greenlanders,' not Americans or Danes, and are 'not for sale'", "They asked the UN to mediate the dispute", "They proposed a referendum on independence from Denmark"],
+    ans: 1,
+    exp: "Greenlandic leaders issued a joint statement with a clear message: they want to be <strong>'Greenlanders,' not Americans or Danes</strong>, and declared their territory is <strong>'not for sale.'</strong>"
+  },
+  {
+    section: "Trade & Tariffs",
+    q: "What does 'TACO' stand for in the context of Trump's trade policy?",
+    opts: ["Trade Agreements Carefully Optimized", "Trump Always Chickens Out", "Tariff Adjustment and Competitive Ordering", "Trans-Atlantic Commercial Operations"],
+    ans: 1,
+    exp: "<strong>TACO = 'Trump Always Chickens Out'</strong> — a market term describing his pattern of announcing extreme tariff threats, causing market shocks, then backing down to 'napkin deals.'"
+  },
+  {
+    section: "Trade & Tariffs",
+    q: "The 'Liberation Day' tariffs pushed U.S. effective tariff rates to 14.4% — a level not seen since which protectionist law?",
+    opts: ["The McKinley Tariff Act of 1890", "The Smoot-Hawley Act of 1930", "The Fordney-McCumber Act of 1922", "The Revenue Act of 1916"],
+    ans: 1,
+    exp: "The <strong>Smoot-Hawley Act of 1930</strong> is the historical benchmark — a notorious protectionist law that many economists credit with deepening the Great Depression. Reaching those rate levels again is considered a major warning sign."
+  },
+  {
+    section: "Trade & Tariffs",
+    q: "What is the estimated annual cost of Trump's tariffs to the average American household?",
+    opts: ["$300–$700", "$1,200–$5,000", "$6,000–$10,000", "$500–$800"],
+    ans: 1,
+    exp: "The study guide cites estimates of <strong>$1,200 to $5,000 per household annually</strong> as the cost of Trump's tariff regime."
+  },
+  {
+    section: "Scholar Perspectives",
+    q: "Seva Gunitsky's 'Neo-Feudalism' argument holds that Trump is replacing the rules-based capitalist order with:",
+    opts: ["A military empire based on territorial conquest", "A system driven by personal loyalty, tribute, and ad hoc deals where allies are treated as vassals", "A new multilateral framework centered on bilateral economic agreements", "A technocratic order managed by private corporations"],
+    ans: 1,
+    exp: "Gunitsky argues Trump is creating a <strong>neo-feudal order</strong>: traditional national interest is replaced by patronage, allies must pay for protection, and international institutions are treated as irrelevant."
+  },
+  {
+    section: "Scholar Perspectives",
+    q: "Krzysztof Pelc's 'Imperial Aesthetics' argument suggests Trump's actions are primarily driven by:",
+    opts: ["Rational economic calculations about long-term U.S. competitiveness", "A fixation with the staged, visual look of power (annexations, seizures) for TV audiences rather than actual strategic benefit", "Ideological opposition to liberal democracy globally", "A desire to rebuild the U.S. manufacturing base through territorial expansion"],
+    ans: 1,
+    exp: "Pelc argues Trump is obsessed with the <strong>'staged look of power'</strong> — annexations, seizures, monuments — rather than the real mechanics of influence (data centers, undersea cables) that define 21st-century power."
+  },
+  {
+    section: "Scholar Perspectives",
+    q: "Paul Musgrave's FPA-based argument about Trump emphasizes that:",
+    opts: ["Trump's foreign policy views are a recent product of his time in office", "Trump's zero-sum, transactional worldview has been remarkably consistent since at least the 1980s", "Trump is primarily influenced by academic realist theory", "Trump's policies shift dramatically based on domestic political pressure"],
+    ans: 1,
+    exp: "Musgrave shows Trump's worldview has been <strong>stable since at least 1987</strong> — always zero-sum, always seeing allies as exploiters who owe 'protection money,' always treating IR as a series of immediate transactions."
+  },
+  {
+    section: "Scholar Perspectives",
+    q: "According to Stephen Walt's analysis of Trump II, which of the following is happening as a result of U.S. behavior?",
+    opts: ["Former allies are bandwagoning with the U.S. out of fear", "Former allies are 'balancing' against the U.S. — for example, Canada seeking a strategic partnership with China", "Adversaries like Russia are softening their posture toward the West", "International institutions are becoming stronger to counterbalance U.S. power"],
+    ans: 1,
+    exp: "Walt's Balance-of-Threat Theory predicts that when a state becomes a <strong>'compulsive predator'</strong>, former friends start balancing against it. His key example: Canada — a NATO ally — seeking a new strategic partnership with China."
+  },
+  {
+    section: "Synthesis",
+    q: "Which statement BEST captures the central tension the study guide presents about Trump II's foreign policy?",
+    opts: ["Trump is a classic realist pursuing balance-of-power politics more aggressively than predecessors", "Trump is a committed idealist trying to spread democracy through force", "Trump's policies represent a fundamental break from both realist and liberal traditions, driven by personality, aesthetics, and neo-feudal logic rather than coherent strategy", "Trump is following Containment doctrine updated for the 21st century"],
+    ans: 2,
+    exp: "The guide's four scholars converge on a key point: Trump II <strong>cannot be explained by classic IR theories</strong>. Walt says it violates realism; Gunitsky calls it neo-feudal; Pelc calls it aesthetic; Musgrave calls it personality. The break is fundamental, not just stylistic."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = 0;
+let wrongItems = [];
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz-area').style.display = 'block';
+  renderQuestion(0);
+}
+
+function renderQuestion(idx) {
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+
+  const q = questions[idx];
+  const labels = ['A', 'B', 'C', 'D'];
+
+  const card = document.createElement('div');
+  card.className = 'q-card active';
+  card.id = `q-${idx}`;
+
+  card.innerHTML = `
+    <div class="section-tag">${q.section}</div>
+    <div class="q-num">Question ${idx + 1} of ${questions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options" id="opts-${idx}">
+      ${q.opts.map((o, i) => `
+        <button class="option-btn" onclick="selectAnswer(${idx}, ${i})" id="opt-${idx}-${i}">
+          <span class="opt-label">${labels[i]}</span>
+          <span>${o}</span>
+        </button>
+      `).join('')}
+    </div>
+    <div class="explanation" id="exp-${idx}">${q.exp}</div>
+    <div class="nav">
+      <button class="btn" id="prev-btn" onclick="goTo(${idx - 1})" ${idx === 0 ? 'disabled' : ''}>← Prev</button>
+      <button class="btn primary" id="next-btn" onclick="goTo(${idx + 1})" style="display:none;">${idx === questions.length - 1 ? 'See Results →' : 'Next →'}</button>
+    </div>
+  `;
+
+  area.appendChild(card);
+  updateProgress();
+}
+
+function selectAnswer(qIdx, chosen) {
+  const q = questions[qIdx];
+  const opts = document.querySelectorAll(`#opts-${qIdx} .option-btn`);
+  
+  opts.forEach(btn => btn.disabled = true);
+
+  if (chosen === q.ans) {
+    opts[chosen].classList.add('correct-ans');
+    document.getElementById(`q-${qIdx}`).classList.add('correct');
+    score++;
+  } else {
+    opts[chosen].classList.add('wrong-ans');
+    opts[q.ans].classList.add('correct-ans');
+    document.getElementById(`q-${qIdx}`).classList.add('wrong');
+    wrongItems.push(q.q.length > 70 ? q.q.substring(0, 70) + '…' : q.q);
+  }
+
+  answered++;
+  document.getElementById(`exp-${qIdx}`).classList.add('show');
+  document.getElementById('next-btn').style.display = 'inline-block';
+  updateScore();
+  updateProgress();
+}
+
+function goTo(idx) {
+  if (idx >= questions.length) {
+    showResults();
+    return;
+  }
+  if (idx < 0) return;
+  current = idx;
+  renderQuestion(idx);
+}
+
+function updateScore() {
+  document.getElementById('score-display').textContent = `Score: ${score} / ${answered}`;
+}
+
+function updateProgress() {
+  const pct = (answered / questions.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function showResults() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const results = document.getElementById('results');
+  results.style.display = 'block';
+
+  const pct = Math.round((score / questions.length) * 100);
+  let message = '';
+  if (pct >= 88) message = "Excellent work — you clearly understand the material deeply. Walk into that midterm with confidence.";
+  else if (pct >= 72) message = "Solid performance. Review the questions you missed and pay attention to the scholar perspectives section.";
+  else if (pct >= 56) message = "You've got the basics, but spend more time on the case studies and theoretical frameworks before the exam.";
+  else message = "This material takes time to absorb. Re-read the study guide sections corresponding to your missed questions and try again.";
+
+  const wrongHtml = wrongItems.length > 0 ? `
+    <div class="wrong-list">
+      <h3>Review These Topics</h3>
+      <ul>${wrongItems.map(w => `<li>${w}</li>`).join('')}</ul>
+    </div>
+  ` : '';
+
+  results.innerHTML = `
+    <div class="big-score">${pct}%</div>
+    <div class="score-label">${score} correct out of ${questions.length} questions</div>
+    <div class="result-message">${message}</div>
+    ${wrongHtml}
+    <button class="btn primary" onclick="restartQuiz()">Retake Quiz</button>
+  `;
+
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('score-display').textContent = `Final: ${score} / ${questions.length}`;
+}
+
+function restartQuiz() {
+  score = 0;
+  answered = 0;
+  wrongItems = [];
+  current = 0;
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('score-display').textContent = 'Score: 0 / 0';
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('quiz-area').style.display = 'block';
+  renderQuestion(0);
+}
+</script>
+</body>
+</html>
