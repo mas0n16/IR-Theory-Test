@@ -531,7 +531,7 @@
 <main>
   <div id="intro">
     <h2>Ready to test yourself?</h2>
-    <p>50 questions in the bank — shuffled every attempt. Pick your length and go.</p>
+    <p>62 questions in the bank — shuffled every attempt. Pick your length and go.</p>
     <div class="category-grid">
       <span class="cat-pill">IR Theories</span>
       <span class="cat-pill">Historical Doctrines</span>
@@ -540,6 +540,7 @@
       <span class="cat-pill">Greenland</span>
       <span class="cat-pill">Trade & Tariffs</span>
       <span class="cat-pill">Scholar Perspectives</span>
+      <span class="cat-pill">Synthesis</span>
     </div>
     <div class="length-picker">
       <div class="length-label">How many questions?</div>
@@ -952,6 +953,91 @@ const allQuestions = [
     opts: ["Policy Tensor focuses on economic motives; Musgrave focuses on cultural identity", "Musgrave explains Trump through consistent personality and zero-sum logic; Policy Tensor sees a deeper Nietzschean drive to accumulate power as an end in itself", "Policy Tensor focuses on domestic politics; Musgrave focuses on international structure", "There is no meaningful difference — both make the same FPA argument"],
     ans: 1,
     exp: "Musgrave says Trump has a <strong>consistent transactional worldview</strong>; Policy Tensor goes deeper, arguing the behavior reflects a <strong>Nietzschean will to power</strong> — dominance sought not for strategic ends but as a value in itself."
+  },
+  // ── NEW: FROM STUDENT NOTES ───────────────────────────────────
+  {
+    section: "IR Theories",
+    q: "Realism argues that the international system is primarily shaped by:",
+    opts: ["Shared democratic values and institutional norms", "Anarchic competition between states over power and national interests", "Economic interdependence that makes war too costly", "Cultural and ideological solidarity among like-minded nations"],
+    ans: 1,
+    exp: "<strong>Realism</strong> holds that the international system is anarchic — no world government exists — so states are perpetually competing in military and economic contests, optimizing for their own national interests."
+  },
+  {
+    section: "IR Theories",
+    q: "In realist theory, what is the primary 'unit' of analysis in international relations?",
+    opts: ["Individual leaders and their personalities", "Multinational corporations and financial institutions", "Nation-states (countries) as coherent actors", "International organizations like the UN"],
+    ans: 2,
+    exp: "Realism treats <strong>nation-states as the primary units</strong> of IR analysis — unified actors that rationally optimize for national interests in a competitive, anarchic international system."
+  },
+  {
+    section: "IR Theories",
+    q: "Idealism (Liberalism) in IR is sometimes described as 'status-quo' or 'hierarchical.' What does this mean?",
+    opts: ["It always seeks to overturn existing power structures", "Liberal approaches can range from egalitarian to ones that maintain or reinforce existing hierarchies, depending on whose values are promoted", "It only applies to democracies with equal voting rights", "It refers exclusively to economic equality between nations"],
+    ans: 1,
+    exp: "Idealism/Liberalism is not monolithic — it can be <strong>egalitarian, status-quo, or hierarchical</strong>. For example, liberal interventionism may claim to spread democracy while actually reinforcing U.S.-led hierarchies of power."
+  },
+  {
+    section: "IR Theories",
+    q: "Idealists may justify the use of military force for which of the following reasons?",
+    opts: ["Only to respond to direct attacks on the homeland", "Only when authorized by the UN Security Council", "For peace, capitalist markets, democracy promotion, or human rights", "Never — Idealists are pacifists by definition"],
+    ans: 2,
+    exp: "Unlike the stereotype of Idealism as purely peaceful, <strong>liberal interventionism</strong> has justified military force for peace, democracy promotion, capitalist market access, and human rights — making it more complex than simple pacifism."
+  },
+  {
+    section: "IR Theories",
+    q: "W.E.B. Du Bois contributed to IR theory by arguing that:",
+    opts: ["Democratic institutions naturally eliminate racial inequality over time", "Racist ideology and economic exploitation are intertwined forces that shape international relations", "The UN is the best mechanism for resolving conflicts between great powers", "Nuclear deterrence is the primary guarantor of peace in the modern era"],
+    ans: 1,
+    exp: "<strong>W.E.B. Du Bois</strong> theorized that <strong>racist ideology and economic exploitation</strong> are inseparable in international relations — an early critique of how race structures global power, anticipating later postcolonial IR theory."
+  },
+  {
+    section: "IR Theories",
+    q: "Marxist IR theory, as a form of Geoeconomics, primarily focuses on:",
+    opts: ["How military alliances determine trade patterns between states", "How capitalist investors exploit workers and terrain across national borders", "How democratic norms spread through economic interdependence", "How nuclear deterrence stabilizes capitalist economies"],
+    ans: 1,
+    exp: "<strong>Marxist IR</strong> analyzes how <strong>capitalist investors exploit labor and terrain</strong> across borders — seeing global economic patterns not as mutual benefit but as structured exploitation driven by capital accumulation."
+  },
+  {
+    section: "IR Theories",
+    q: "The 'English School' of IR is grouped with Constructivism because both approaches:",
+    opts: ["Emphasize military power and national interest as the core drivers of state behavior", "Track how norms, shared understandings, and social structures evolve and shape international behavior over time", "Focus exclusively on economic variables to explain foreign policy outcomes", "Argue that international institutions are the primary cause of peace"],
+    ans: 1,
+    exp: "Both <strong>Constructivism and the English School</strong> focus on how <strong>norms, shared ideas, and social structures evolve over time</strong> and shape state behavior — in contrast to realism's focus on material power or liberalism's focus on values."
+  },
+  {
+    section: "IR Theories",
+    q: "According to Seva Gunitsky, IR theory is useful even when foreign policy actors don't consciously use it because:",
+    opts: ["IR theory predicts behavior regardless of whether actors have read it, since it reflects structural forces they respond to", "Foreign policy makers are secretly trained in IR theory before taking office", "IR theory only applies to academic debates, not real-world events", "Actors always consciously apply theoretical frameworks when making decisions"],
+    ans: 0,
+    exp: "Gunitsky argues IR theory <strong>can serve as a useful analytical lens even if policymakers don't know or think in theoretical terms</strong> — the theories describe structural pressures and incentives that shape behavior whether or not actors are aware of them."
+  },
+  {
+    section: "Scholar Perspectives",
+    q: "In 'Geopolitics, But Make It Dumb and Personal,' Gunitsky's core argument about Trump II is that:",
+    opts: ["Trump is a textbook realist optimizing U.S. relative power through rational strategy", "Trump represents a major break from decades of prior U.S. foreign policy, with motivations better explained by a drive for personal dominance than any coherent IR theory", "Trump's policies are best explained by Idealist theory — spreading democracy through force", "Trump's behavior fits neatly within Constructivist expectations about norm evolution"],
+    ans: 1,
+    exp: "Gunitsky's essay argues Trump II represents a <strong>major break from prior U.S. foreign policy</strong> and that his motivations are best understood as playing for <strong>personal dominance</strong> — not fitting neatly into realism, liberalism, or any classic IR framework."
+  },
+  {
+    section: "Scholar Perspectives",
+    q: "Gunitsky's essay title — 'Geopolitics, But Make It Dumb and Personal' — implies that Trump's foreign policy differs from traditional geopolitics because:",
+    opts: ["Trump uses more sophisticated game theory than previous administrations", "Traditional geopolitics involves strategic calculation; Trump substitutes personal grievance, spectacle, and dominance-seeking", "Trump focuses exclusively on military power rather than diplomatic channels", "The title is ironic — Trump's policy is actually more coherent than his critics admit"],
+    ans: 1,
+    exp: "The title is a critique: traditional geopolitics involves <strong>strategic calculation about national interests</strong>. Gunitsky argues Trump substitutes <strong>personal grievance, spectacle, and dominance-seeking</strong> — making it 'dumb and personal' rather than strategically rational."
+  },
+  {
+    section: "IR Theories",
+    q: "Foreign Policy Analysis (FPA) differs from system-level IR theories (like Realism) by:",
+    opts: ["Focusing on the structure of the international system rather than individual states", "Looking inside states at decision-making patterns, organizational cultures, leader personalities, and public opinion", "Ignoring the role of individual leaders entirely in favor of structural explanations", "Treating all states as identical rational actors pursuing the same interests"],
+    ans: 1,
+    exp: "<strong>FPA</strong> 'probes inside' national states — examining <strong>decision-making patterns, organizational cultures, leader personalities</strong>, and public opinion — rather than treating states as black-box unitary actors as realism does."
+  },
+  {
+    section: "IR Theories",
+    q: "Which IR framework would be most useful for analyzing how public opinion in the U.S. shapes presidential foreign policy decisions?",
+    opts: ["Classical Realism", "Balance-of-Threat Theory", "Foreign Policy Analysis (FPA)", "Marxist Geoeconomics"],
+    ans: 2,
+    exp: "<strong>FPA</strong> explicitly includes the study of <strong>public opinion and citizen attitudes about foreign policy</strong> as a variable shaping state behavior — making it the most appropriate tool for this kind of analysis."
   }
 ];
 
