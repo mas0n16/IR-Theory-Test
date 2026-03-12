@@ -21,17 +21,12 @@
 
 - { box-sizing: border-box; margin: 0; padding: 0; }
 
-html {
-background: #0a0a0f;
-color-scheme: dark;
-}
-
 body {
-background: #0a0a0f;
-color: #e8e4d8;
+background: var(–bg);
 color: var(–text);
 font-family: ‘IBM Plex Sans’, sans-serif;
 min-height: 100vh;
+padding: 0;
 overflow-x: hidden;
 }
 
@@ -41,7 +36,7 @@ position: fixed;
 inset: 0;
 background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.04’/%3E%3C/svg%3E”);
 pointer-events: none;
-z-index: -1;
+z-index: 999;
 }
 
 /* ── VERSION STRIP ── */
@@ -79,6 +74,7 @@ letter-spacing: 0.05em;
 
 /* ── HEADER ── */
 header {
+border-bottom: 1px solid var(–border);
 padding: 2rem 2rem 1.5rem;
 display: flex;
 align-items: flex-end;
@@ -92,14 +88,12 @@ font-size: clamp(1.8rem, 4vw, 2.8rem);
 font-weight: 900;
 line-height: 1;
 letter-spacing: -0.02em;
-color: #e8e4d8;
 color: var(–text);
 }
-.header-title span { color: #c8a84b; color: var(–accent); }
+.header-title span { color: var(–accent); }
 .header-sub {
 font-family: ‘IBM Plex Mono’, monospace;
 font-size: 0.7rem;
-color: #6b6880;
 color: var(–muted);
 letter-spacing: 0.12em;
 text-transform: uppercase;
@@ -227,7 +221,7 @@ main { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
 /* ── INTRO ── */
 #intro { text-align: center; padding: 3rem 1rem; }
-#intro h2 { font-family: ‘Playfair Display’, serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; color: #e8e4d8; color: var(–text); }
+#intro h2 { font-family: ‘Playfair Display’, serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; color: var(–text); }
 #intro p { font-size: 0.9rem; color: var(–muted); max-width: 440px; margin: 0 auto 2rem; line-height: 1.6; }
 
 .category-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
@@ -343,19 +337,21 @@ display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
     <div class="header-sub" id="header-sub">International Relations & U.S. Foreign Policy</div>
   </div>
   <div class="header-right">
-    <div class="version-toggle">
-      <button class="v-btn v1-btn active" id="btn-v1" onclick="switchVersion(1)">
-        <span class="v-dot"></span>V1
-      </button>
-      <button class="v-btn v2-btn" id="btn-v2" onclick="switchVersion(2)">
-        <span class="v-dot"></span>V2<span class="v-new">NEW</span>
-      </button>
+    <div id="version-toggle-wrap" style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem;">
+      <div class="version-toggle">
+        <button class="v-btn v1-btn active" id="btn-v1" onclick="switchVersion(1)">
+          <span class="v-dot"></span>V1
+        </button>
+        <button class="v-btn v2-btn" id="btn-v2" onclick="switchVersion(2)">
+          <span class="v-dot"></span>V2<span class="v-new">NEW</span>
+        </button>
+      </div>
+      <label class="mt1-toggle" id="mt1-label">
+        <input type="checkbox" id="mt1-check" checked onchange="toggleMT1Box()">
+        <span class="mt1-box" id="mt1-box">✓</span>
+        <span class="mt1-text">Include Midterm 1 material</span>
+      </label>
     </div>
-    <label class="mt1-toggle" id="mt1-label">
-      <input type="checkbox" id="mt1-check" checked onchange="toggleMT1Box()">
-      <span class="mt1-box" id="mt1-box">✓</span>
-      <span class="mt1-text">Include Midterm 1 material</span>
-    </label>
     <div class="score-badge" id="score-display">Score: 0 / 0</div>
   </div>
 </header>
@@ -582,7 +578,7 @@ const versionConfig = {
     stripClass: "v2",
     stripLabel: "▶ V2 — Cumulative Bank",
     stripDesc: "78 questions · All V1 topics + Ackerman (Tax Brackets) + Levey (Medical Debt)",
-    titleHTML: 'IR <span>&amp;</span> Policy Quiz',
+    titleHTML: 'IR <span>&amp; Policy</span> Quiz',
     subtitle: "International Relations · U.S. Foreign Policy · Tax Policy · Health Care",
     introDesc: "78 questions in the bank — all V1 material plus Ackerman and Levey readings. Shuffled every attempt.",
     fullBankCount: 78,
@@ -749,6 +745,8 @@ function startQuiz() {
   questions.forEach(q => { sectionResults[q.section].total++; });
   document.getElementById('intro').style.display = 'none';
   document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('version-toggle-wrap').style.display = 'none';
+  document.getElementById('mt1-label').classList.remove('visible');
   renderQuestion(0);
 }
 
@@ -911,6 +909,8 @@ function restartQuiz(goToIntro = false) {
   document.getElementById('results').style.display = 'none';
   if (goToIntro) {
     document.getElementById('intro').style.display = 'block';
+    document.getElementById('version-toggle-wrap').style.display = 'flex';
+    if (activeVersion === 2) document.getElementById('mt1-label').classList.add('visible');
   } else {
     startQuiz();
   }
